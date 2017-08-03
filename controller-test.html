@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Team Winners">
+
+    <title>Controller - Home</title>
+	<!-- Style Sheets-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+	<link href="css/custom.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<script>
+	var socket = io();
+	function doSomething(){
+		socket.emit('doSomething');
+	}
+	</script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="">
+			<div class="row">
+				<div class="col-xs-1 col-xs-offset-1">
+					<button type="button" class="btn btn-default btn-lg" id="up-button" aria-label="up"><span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span></button>
+				</div>
+				<div class="col-xs-2 col-xs-offset-5">
+					<button type="button" class="btn btn-default btn-lg" onclick="playLullaby(1)">Play Lullaby</button>
+					<!--
+					<div class="dropdown">
+						<button id="dLabel" type="button" class="btn btn-default btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Play Lullaby
+							<span id="caret" class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dLabel">								
+							<li><a onclick="playLullaby(1)">Lullaby</a></li>
+							
+							<li><a onclick="playLullaby(2)">Hush Little Baby</a></li>
+							<li><a onclick="playLullaby(3)">Lullaby and Goodnight</a></li>
+							
+						</ul>
+					</div>
+					-->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-2">
+					<button type="button" class="btn btn-default btn-lg" id="left-button" aria-label="left"><span class ="glyphicon glyphicon-triangle-left" aria-hidden="true"></span></button>
+				</div>
+				<div class="col-xs-1">
+					<button type="button" class="btn btn-default btn-lg" id="right-button" aria-label="right"><span class ="glyphicon glyphicon-triangle-right" aria-hidden="true"></span></button>
+				</div>
+				<div class="col-xs-2 col-xs-offset-5">
+					<button type="button" id ="get_data" onclick="record()" class="btn btn-default btn-lg">record</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-1 col-xs-offset-1">
+					<button type="button" class="btn btn-default btn-lg" id="down-button" aria-label="down"><span class ="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></button>
+				</div>
+				<div class="col-xs-2 col-xs-offset-6">
+					<button type="button" onclick="play()" class="btn btn-default btn-lg">play</b utton>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box">
+						<p>Distance: <span id="distance_data">0</span> cm</p>
+						<p>Temperature: <span id="temperature_data">0</span> &deg C</p>
+						<p>Humidity: <span id="humidity_data">0</span> %</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	<div>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script>
+    $(document).ready(function(){
+		$('.button').click(function(){
+			var clickBtnValue = $(this).val();
+			var ajaxurl = 'ajax.php',
+			data =  {'action': clickBtnValue};
+			$.post(ajaxurl, data, function (response) {
+				// Response div goes here.
+				alert("action performed successfully");
+			});
+		});
+	});
+	</script>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="index.js"></script>
+	<script>
+	var socket = io();
+	socket.on('data', function(distance, temperature, humidity){
+		setData(distance, temperature, humidity);
+	})
+	document.getElementById("up-button").onclick = function() {up()};
+	document.getElementById("left-button").onclick = function() {left()};
+	document.getElementById("right-button").onclick = function() {right()};
+	document.getElementById("down-button").onclick = function() {down()};
+	document.getElementById("record").onclick = function() {record()};
+	document.getElementById("play").onclick = function() {play()};
+	function up(){
+		socket.emit('up');
+	}
+	function down(){
+		socket.emit('down');
+	}
+	function left(){
+		socket.emit('left');
+	}
+	function right(){
+		socket.emit('right');
+	}
+	function record(){
+		socket.emit('record');
+	}
+	function play(){
+		socket.emit('play');
+	}
+	function playLullaby(song) {
+		socket.emit('playLullaby', song);
+	}
+	function setData(d, t, h){
+		document.getElementById("distance_data").innerHTML = d;
+		document.getElementById("temperature_data").innerHTML = t;
+		document.getElementById("humidity_data").innerHTML = h;
+	}
+	function initData(){
+		socket.emit('requestData');
+	}
+	</script>
+</body>
+</html>
